@@ -1,18 +1,7 @@
-NuttX Task Tracer
-=================
+NuttX Task Tracer User Guide
+============================
 
-# Overview
-
-NuttX Task Tracer is the tool to collect the various events in the NuttX kernel and display the result graphically.
-
-It can collect the following events.
-
-- Task execution, termination, switching
-- Entering to and leaving from the system call
-- Entering to and leaving from the interrupt handler
-- User defined message embedded in the user application
-
-# Preparation
+# Installation
 
 ## Install Trace Compass
 
@@ -50,28 +39,35 @@ The trace function can be controlled by NuttShell "trace" command.
 
 ## Quick Guide
 
-Trace can be started by the following command.
+Trace is started by the following command.
 ```
 nsh> trace start
 ```
 
-Trace can be stopped by the following command.
+Trace is stopped by the following command.
 ```
 nsh> trace stop
 ```
 
 The trace result is accumulated in the memory.
-After getting the trace, the following command can display the accumulated trace data to the console.
+After getting the trace, the following command displays the accumulated trace data to the console.
 ```
 nsh> trace dump
 ```
 By using the logging function of your terminal software, the trace result can be saved into the host environment and it can be used as the input for "Trace Compass".
 
-The trace result can be stored into the file by using the following command.
+If the target has a storage, the trace result can be stored into the file by using the following command.
+It also can be used as the input for "Trace Compass" by transferring the file in the target device to the host.
 ```
 nsh> trace dump <file name>
 ```
-If the target has a storage and has a way to transfer the file to the host by using such as USB MSC, the trace result file also can be used as the input for "Trace Compass".
+
+To display the trace result by "Trace Compass", choose `File` -> `Open Trace` menu to specify the trace data file name.
+
+
+
+![Trace Compass screenshot](image/trace-compass-screenshot.png)
+
 
 ## Trace command description
 
@@ -80,7 +76,7 @@ Start task tracing
 ```
 trace start [<duration>]
 ```
-- `<duration>` : Specify the duration to trace by seconds.
+- `<duration>` : Specify the duration of the trace by seconds.
 Task tracing is stopped after the specified period.
 If not specified, the tracing continues until stopped by the command.
 
@@ -92,7 +88,7 @@ trace stop
 
 ### **trace dump**
 Output the trace result.
-If running the task trace, it is stopped before the output.
+If the task trace is running, it is stopped before the output.
 ```
 trace dump [<filename>]
 ```
@@ -120,14 +116,13 @@ By default, all options are disabled.
 trace mode [{+|-}{o|s|a|i}...]
 ```
 - `+o` : Enable one-shot mode.
-The trace buffer is used as the ring buffer by default, and the old data is overwritten when whole trace buffer is used.
-If one-shot mode is enabled, the task trace is stoppedn whe whole buffer is used.
-It can be used to get the trace of application boot.
+The trace buffer is used as the ring buffer by default, and the old data is overwritten if no free space is available in the trace buffer.
+If one-shot mode is enabled, the task trace is stopped when all buffer is used.
 
 - `-o` : Disable one-shot mode.
 
 - `+s` : Enable system call trace.
-It records the event of entering to and leaving from the system call which is issued by the application.
+It records the event of enter/leave system call which is issued by the application.
 All system calls are recorded by default. `trace syscall` command can filter the system calls to be recorded.
 
 - `-s` : Disable system call trace.
@@ -135,15 +130,15 @@ All system calls are recorded by default. `trace syscall` command can filter the
 - `+a` : Enable recording the system call arguments.
 It records the arguments passed to the issued system call to the trace data.
 
-- `-a` : Disable recoding the system call arguments.
+- `-a` : Disable recording the system call arguments.
 
 - `+i` : Enable interrupt trace.
-It records the event of entering to and leaving from the interrupt handler which is occured while the tracing.
+It records the event of enter/leave interrupt handler which is occured while the tracing.
 All IRQs are recorded by default. `trace irq` command can filter the IRQs to be recorded.
 
 - `-i` : Disable interrupt trace.
 
-If no command parameters are given, display the current mode as the follows.
+If no command parameters are specified, display the current mode as the follows.
 
 Example:
 ```
@@ -158,19 +153,19 @@ Task trace mode:
 ```
 
 ### **trace syscall**
-Configure the filter of system call trace.
+Configure the filter of the system call trace.
 ```
 trace syscall [{+|-}<syscallname>...]
 ```
 - `+<syscallname>` : Add the specified system call name to the filter.
 The execution of the filtered system call is not recorded into the trace data.<p>
 Wildcard "`*`" can be used to specify the system call name.
-For example, "`trace syscall +sem_*`" filters the system calls begin with "`sem_`", such as `sem_post()` and `sem_wait()`.
+For example, "`trace syscall +sem_*`" filters the system calls begin with "`sem_`", such as `sem_post()`, `sem_wait()`,...
 
 - `-<syscallname>` : Remove the specified system call name from the filter.
 Wildcard "`*`" can be used to specify the system call name.
 
-If the parameter is not specified, display the current filter settings as the follows.
+If no command parameters are specified, display the current filter settings as the follows.
 
 Example:
 ```
@@ -195,7 +190,7 @@ Filtered Syscalls: 16
 ```
 
 ### **trace irq**
-Configure the filter of interrupt trace.
+Configure the filter of the interrupt trace.
 ```
 trace irq [{+|-}<irqnum>...]
 ```
@@ -204,7 +199,7 @@ The execution of the filtered IRQ handler is not recorded into the trace data.
 
 - `-<irqnum>` : Remove the specified IRQ number from the filter.
 
-If the parameter is not specified, display the current filter settings as the follows.
+If no command parameters are specified, display the current filter settings as the follows.
 
 Example:
 ```
@@ -222,10 +217,6 @@ Example:
 ```
 nsh> echo "message" >/dev/tracer
 ```
-
-# Display the trace result
-
-To display the trace result by "Trace Compass", choose `File` -> `Open Trace` menu to specify the trace data file name.
 
 # Trace Control APIs
 
