@@ -10,7 +10,6 @@ It can collect the following events.
 - Task execution, termination, switching
 - System call enter/leave
 - Interrupt handler enter/leave
-- User defined message
 
 ![Task Tracer Overview](image/nuttx-task-tracer-overview.png)
 
